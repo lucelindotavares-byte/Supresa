@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Surpresa Especial!</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #e91e63;
+            font-size: 24px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .heart {
+            font-size: 120px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+            margin-bottom: 30px;
+            animation: pulse 1.5s infinite;
+            user-select: none;
+        }
+        .heart:hover { transform: scale(1.1); }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .imagem-oculta {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 1s ease-in-out, max-height 1s ease-in-out;
+            width: 90%;
+            max-width: 400px;
+        }
+        .imagem-oculta img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .mostra-imagem {
+            opacity: 1;
+            max-height: 800px;
+            margin-top: 20px;
+        }
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-secondary {
+            background: #0084ff;
+        }
+        .note {
+            margin-top: 12px;
+            color: #666;
+            font-size: 13px;
+            max-width: 640px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Toque no coração para uma surpresa!</h1>
+
+    <div class="container">
+        <div class="heart" id="botao-coracao" title="Toque para ver a surpresa">❤️</div>
+
+        <div class="imagem-oculta" id="foto-surpresa">
+            <img id="foto-revelada" src="" alt="Nossa Foto Especial" />
+        </div>
+
+        <div class="actions">
+            <button class="btn" id="compartilhar-whatsapp" title="Compartilhar no WhatsApp">Compartilhar no WhatsApp</button>
+            <button class="btn btn-secondary" id="baixar-imagem" title="Baixar foto revelada">Baixar foto</button>
+        </div>
+
+        <div class="note" id="nota-uso">
+            Dica: para que o botão "Compartilhar no WhatsApp" envie um link que funcione para a outra pessoa,
+            hospede este arquivo numa URL pública (ex.: GitHub Pages, Netlify). Se a página não estiver hospedada,
+            o botão ainda tenta compartilhar a URL atual (pode não funcionar se estiver abrindo localmente).
+        </div>
+    </div>
+
+    <script>
+        const coracao = document.getElementById('botao-coracao');
+        const fotoContainer = document.getElementById('foto-surpresa');
+        const fotoElement = document.getElementById('foto-revelada');
+        const btnCompartilhar = document.getElementById('compartilhar-whatsapp');
+        const btnBaixar = document.getElementById('baixar-imagem');
+
+        // URL da imagem que será revelada
+        const imageUrl = "surpresa.jpg"; // local image added to the repo
+        fotoElement.src = imageUrl;
+
+        // Revela a imagem quando clica no coração
+        coracao.addEventListener('click', function() {
+            fotoContainer.classList.add('mostra-imagem');
+            coracao.style.animation = 'none';
+            coracao.style.cursor = 'default';
+        });
+
+        // Função para abrir WhatsApp com a URL atual da página
+        function openWhatsAppWithText(text) {
+            const encoded = encodeURIComponent(text);
+            const waUrl = `https://api.whatsapp.com/send?text=${encoded}`;
+            window.open(waUrl, '_blank');
+        }
+
+        btnCompartilhar.addEventListener('click', () => {
+            // Usa a URL atual da página — se estiver hospedado, isso enviará o link público correto
+            const pageUrl = window.location.href;
+            const message = `Uma surpresa para você! Abra aqui: ${pageUrl}`;
+            openWhatsAppWithText(message);
+        });
+
+        // Baixar apenas a foto revelada
+        btnBaixar.addEventListener('click', () => {
+            const a = document.createElement('a');
+            a.href = imageUrl;
+            a.download = 'surpresa.jpg';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        });
+
+        // Abre a imagem automaticamente quando já estiver visível no link (opcional)
+        // Se você quiser que a imagem já comece visível quando houver um parâmetro ?open=1, descomente:
+        // if (new URLSearchParams(location.search).get('open') === '1') { fotoContainer.classList.add('mostra-imagem'); }
+    </script>
+</body>
+</html>
